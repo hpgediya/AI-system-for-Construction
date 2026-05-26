@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ConstructAI Operations System</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">CA</div>
+      <div>
+        <strong>ConstructAI</strong>
+        <span>Operations System</span>
+      </div>
+    </div>
+
+    <nav aria-label="System modules">
+      <button class="nav-item active" data-module="dashboard">Dashboard</button>
+      <button class="nav-item" data-module="estimate">Quantity Estimate</button>
+      <button class="nav-item" data-module="schedule">Scheduling</button>
+      <button class="nav-item" data-module="coordination">Coordination</button>
+      <button class="nav-item" data-module="quality">Quality Control</button>
+      <button class="nav-item" data-module="budget">Budget Analysis</button>
+      <button class="nav-item" data-module="package">Project Package</button>
+      <button class="nav-item" data-module="vendors">Vendors</button>
+      <button class="nav-item" data-module="employees">Employee Desk</button>
+      <button class="nav-item" data-module="materials">Materials</button>
+      <button class="nav-item" data-module="layout">Layout</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Active project</p>
+        <h1>Riverside Mixed-Use Build</h1>
+      </div>
+      <div class="actions">
+        <button>Generate Report</button>
+        <button class="primary">Run AI Review</button>
+      </div>
+    </header>
+
+    <section class="score-row">
+      <article>
+        <span>Project Health</span>
+        <strong>82%</strong>
+        <small>Schedule risk is moderate</small>
+      </article>
+      <article>
+        <span>Budget Forecast</span>
+        <strong>$4.82M</strong>
+        <small>$145K above baseline</small>
+      </article>
+      <article>
+        <span>Open Quality Items</span>
+        <strong>17</strong>
+        <small>5 due this week</small>
+      </article>
+      <article>
+        <span>Material Risk</span>
+        <strong>3 items</strong>
+        <small>Steel, glazing, switchgear</small>
+      </article>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel module-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Module</p>
+            <h2 id="module-title">Dashboard</h2>
+          </div>
+          <span id="module-status" class="status">Live</span>
+        </div>
+        <p id="module-description" class="description"></p>
+        <div id="module-details" class="detail-grid"></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">AI alerts</p>
+            <h2>Recommended Actions</h2>
+          </div>
+        </div>
+        <div class="alert-list" id="alert-list"></div>
+      </article>
+    </section>
+
+    <section class="panel wide-panel">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">Project control</p>
+          <h2>Work Package Overview</h2>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Package</th>
+              <th>Status</th>
+              <th>Budget</th>
+              <th>Forecast</th>
+              <th>Owner</th>
+              <th>AI Note</th>
+            </tr>
+          </thead>
+          <tbody id="package-table"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
