@@ -24,10 +24,24 @@ An AI automation system concept for construction companies. It covers quantity e
 - Material type, usage, cost, and feasibility analysis
 - Layout and site planning
 
-## How To Open The Prototype
+## How To Use The Prototype
 
 Open this file in a browser:
 
 `prototype/index.html`
 
 The prototype is static, so it does not require a server.
+
+You can now edit project information directly in the page:
+
+- Change project name, client, location, dates, budget, and manager.
+- Edit existing work packages directly in the table, including budget, forecast, owner, status, and notes.
+- Edit existing materials directly in the table, including type, usage, unit cost, lead time, and feasibility.
+- Edit vendors, suppliers, employees, and assignments directly in their tables.
+- Add new rows when the project needs more packages, materials, vendors, or employees.
+- Remove demo rows that do not fit your project.
+- Use `Export Project` to download the project data as a JSON file.
+- Use `Import Project` to load a previously exported project JSON file.
+- Use `Reset Demo` to restore the original sample data.
+
+Your edits are saved in your browser automatically.
