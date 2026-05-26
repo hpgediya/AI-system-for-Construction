@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Editable Construction AI System</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f4f6f5; color: #1d2924; }
+    header { background: #16241e; color: #fff; padding: 22px; }
+    main { display: grid; gap: 18px; padding: 18px; }
+    h1, h2 { margin: 0; }
+    h1 { font-size: 28px; }
+    h2 { font-size: 20px; }
+    .bar, section { background: #fff; border: 1px solid #d8dfdc; border-radius: 8px; padding: 16px; }
+    .bar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .status { color: #1d6049; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    label { display: grid; gap: 6px; color: #5d6b66; font-size: 13px; font-weight: 700; }
+    input, select, textarea, button { font: inherit; border-radius: 8px; border: 1px solid #d8dfdc; padding: 9px 10px; }
+    input, select, textarea { width: 100%; background: #fff; color: #1d2924; }
+    button { cursor: pointer; font-weight: 700; background: #fff; }
+    button.primary { background: #24745a; color: #fff; border-color: #24745a; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .card { background: #eef3f0; border-radius: 8px; padding: 14px; }
+    .card span { color: #5d6b66; display: block; font-size: 13px; margin-bottom: 8px; }
+    .card strong { display: block; font-size: 24px; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; min-width: 820px; }
+    th, td { border-top: 1px solid #d8dfdc; padding: 9px; text-align: left; vertical-align: top; }
+    th { color: #5d6b66; font-size: 13px; }
+    td input, td select { min-width: 120px; }
+    .add-row { display: grid; grid-template-columns: repeat(6, minmax(120px, 1fr)) auto; gap: 8px; margin-top: 12px; }
+    .remove { color: #a43838; border: 0; background: transparent; padding: 6px; }
+    .hidden { display: none; }
+    @media (max-width: 900px) {
+      .grid, .cards, .add-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="title">Construction AI Automation System</h1>
+  </header>
+
+  <main>
+    <div class="bar">
+      <div>
+        <strong id="project-label">Editable project workspace</strong>
+        <div class="status" id="status">Ready to edit</div>
+      </div>
+      <div class="actions">
+        <button id="exportBtn" type="button">Export Project</button>
+        <button id="importBtn" type="button">Import Project</button>
+        <button id="resetBtn" type="button">Reset Demo</button>
+        <input class="hidden" id="importFile" type="file" accept="application/json">
+      </div>
+    </div>
+
+    <section>
+      <h2>Project Setup</h2>
+      <div class="grid" id="projectFields"></div>
+    </section>
+
+    <section class="cards">
+      <div class="card"><span>Project Health</span><strong id="health">0%</strong></div>
+      <div class="card"><span>Budget Forecast</span><strong id="forecast">$0</strong></div>
+      <div class="card"><span>Open Quality Items</span><strong id="quality">0</strong></div>
+      <div class="card"><span>Material Risks</span><strong id="risks">0</strong></div>
+    </section>
+
+    <section>
+      <h2>Work Packages</h2>
+      <div class="table-wrap"><table id="packagesTable"></table></div>
+      <form class="add-row" data-add="packages">
+        <input name="name" placeholder="Package" required>
+        <select name="status"><option>On Track</option><option>Watch</option><option>At Risk</option></select>
+        <input name="budget" type="number" placeholder="Budget" required>
+        <input name="forecast" type="number" placeholder="Forecast" required>
+        <input name="owner" placeholder="Owner" required>
+        <input name="note" placeholder="Note">
+        <button class="primary">Add</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Materials: Type, Usage, Cost, Feasibility</h2>
+      <div class="table-wrap"><table id="materialsTable"></table></div>
+      <form class="add-row" data-add="materials">
+        <input name="name" placeholder="Material" required>
+        <input name="type" placeholder="Type" required>
+        <input name="usage" placeholder="Usage" required>
+        <input name="unitCost" type="number" placeholder="Unit cost" required>
+        <input name="leadTime" placeholder="Lead time" required>
+        <select name="feasibility"><option>Good</option><option>Review</option><option>Risk</option></select>
+        <button class="primary">Add</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Vendors and Suppliers</h2>
+      <div class="table-wrap"><table id="vendorsTable"></table></div>
+      <form class="add-row" data-add="vendors">
+        <input name="company" placeholder="Company" required>
+        <input name="category" placeholder="Category" required>
+        <input name="contact" placeholder="Contact" required>
+        <input name="leadTime" placeholder="Lead time" required>
+        <select name="score"><option>Excellent</option><option>Good</option><option>Review</option></select>
+        <button class="primary">Add</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Employee Desk</h2>
+      <div class="table-wrap"><table id="employeesTable"></table></div>
+      <form class="add-row" data-add="employees">
+        <input name="name" placeholder="Employee" required>
+        <input name="role" placeholder="Role" required>
+        <input name="assignment" placeholder="Assignment" required>
+        <input name="availability" placeholder="Availability" required>
+        <select name="status"><option>Ready</option><option>Assigned</option><option>Training Needed</option></select>
+        <button class="primary">Add</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>AI Project Package Notes</h2>
+      <textarea id="packageNotes" rows="5"></textarea>
+    </section>
+  </main>
+
+  <script>
+    var key = "editable-construction-ai-system";
+    var demo = {
+      project: {
+        name: "My Construction Project",
+        client: "Client Name",
+        location: "Project Location",
+        type: "Commercial",
+        startDate: "2026-06-01",
+        finishDate: "2026-12-15",
+        approvedBudget: 1000000,
+        qualityOpen: 4
+      },
+      packages: [
+        { name: "Concrete", status: "On Track", budget: 180000, forecast: 175000, owner: "Site Team", note: "Ready for pour plan" },
+        { name: "Electrical", status: "Watch", budget: 220000, forecast: 245000, owner: "MEP Lead", note: "Long lead equipment" }
+      ],
+      materials: [
+        { name: "Ready-mix concrete", type: "Concrete", usage: "Slabs", unitCost: 185, leadTime: "3 days", feasibility: "Good" },
+        { name: "Switchgear", type: "Electrical", usage: "Main room", unitCost: 98000, leadTime: "18 weeks", feasibility: "Risk" }
+      ],
+      vendors: [
+        { company: "Local Concrete Co.", category: "Concrete", contact: "Contact Person", leadTime: "3 days", score: "Good" }
+      ],
+      employees: [
+        { name: "Site Supervisor", role: "Supervisor", assignment: "Daily site", availability: "Full time", status: "Assigned" }
+      ],
+      notes: "This project package combines estimate, schedule, coordination, quality, budget, vendors, employees, material feasibility, and layout planning notes."
+    };
+    var data = load();
+
+    function copy(obj) { return JSON.parse(JSON.stringify(obj)); }
+    function load() {
+      try {
+        var saved = localStorage.getItem(key);
+        return saved ? JSON.parse(saved) : copy(demo);
+      } catch (error) {
+        return copy(demo);
+      }
+    }
+    function save() {
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+        text("status", "Saved. Editing is working.");
+      } catch (error) {
+        text("status", "Editing works, but browser storage is blocked. Use Export Project.");
+      }
+    }
+    function text(id, value) { document.getElementById(id).textContent = value; }
+    function money(value) {
+      var amount = Number(value || 0);
+      if (amount >= 1000000) return "$" + (amount / 1000000).toFixed(2) + "M";
+      if (amount >= 1000) return "$" + Math.round(amount / 1000) + "K";
+      return "$" + amount.toLocaleString();
+    }
+    function fields() {
+      var list = [
+        ["name", "Project name", "text"],
+        ["client", "Client", "text"],
+        ["location", "Location", "text"],
+        ["type", "Project type", "text"],
+        ["startDate", "Start date", "date"],
+        ["finishDate", "Finish date", "date"],
+        ["approvedBudget", "Approved budget", "number"],
+        ["qualityOpen", "Open quality items", "number"]
+      ];
+      document.getElementById("projectFields").innerHTML = list.map(function(item) {
+        return '<label><span>' + item[1] + '</span><input data-project="' + item[0] + '" type="' + item[2] + '" value="' + (data.project[item[0]] || "") + '"></label>';
+      }).join("");
+    }
+    function table(id, rows, columns, options) {
+      var html = "<thead><tr>" + columns.map(function(c) { return "<th>" + c.label + "</th>"; }).join("") + "<th>Action</th></tr></thead><tbody>";
+      html += rows.map(function(row, rowIndex) {
+        return "<tr>" + columns.map(function(c) {
+          if (c.options) {
+            return '<td><select data-table="' + id + '" data-row="' + rowIndex + '" data-field="' + c.key + '">' +
+              c.options.map(function(o) { return '<option' + (row[c.key] === o ? " selected" : "") + ">" + o + "</option>"; }).join("") +
+              "</select></td>";
+          }
+          return '<td><input data-table="' + id + '" data-row="' + rowIndex + '" data-field="' + c.key + '" type="' + (c.number ? "number" : "text") + '" value="' + (row[c.key] || "") + '"></td>';
+        }).join("") + '<td><button class="remove" data-remove="' + id + '" data-row="' + rowIndex + '" type="button">Remove</button></td></tr>';
+      }).join("");
+      document.getElementById(id + "Table").innerHTML = html + "</tbody>";
+    }
+    function updateSummary() {
+      text("title", data.project.name || "Construction AI Automation System");
+      text("project-label", (data.project.client || "Client") + " | " + (data.project.location || "Location"));
+      var budget = data.packages.reduce(function(sum, row) { return sum + Number(row.budget || 0); }, 0);
+      var forecast = data.packages.reduce(function(sum, row) { return sum + Number(row.forecast || 0); }, 0);
+      var packageRisks = data.packages.filter(function(row) { return row.status !== "On Track"; }).length;
+      var materialRisks = data.materials.filter(function(row) { return row.feasibility !== "Good"; }).length;
+      var health = Math.max(40, 100 - packageRisks * 8 - materialRisks * 7 - Math.min(20, Number(data.project.qualityOpen || 0)));
+      text("health", health + "%");
+      text("forecast", money(forecast || data.project.approvedBudget));
+      text("quality", data.project.qualityOpen || 0);
+      text("risks", materialRisks);
+    }
+    function render() {
+      fields();
+      updateSummary();
+      document.getElementById("packageNotes").value = data.notes || "";
+      table("packages", data.packages, [
+        { key: "name", label: "Package" },
+        { key: "status", label: "Status", options: ["On Track", "Watch", "At Risk"] },
+        { key: "budget", label: "Budget", number: true },
+        { key: "forecast", label: "Forecast", number: true },
+        { key: "owner", label: "Owner" },
+        { key: "note", label: "Note" }
+      ]);
+      table("materials", data.materials, [
+        { key: "name", label: "Material" },
+        { key: "type", label: "Type" },
+        { key: "usage", label: "Usage" },
+        { key: "unitCost", label: "Unit Cost", number: true },
+        { key: "leadTime", label: "Lead Time" },
+        { key: "feasibility", label: "Feasibility", options: ["Good", "Review", "Risk"] }
+      ]);
+      table("vendors", data.vendors, [
+        { key: "company", label: "Company" },
+        { key: "category", label: "Category" },
+        { key: "contact", label: "Contact" },
+        { key: "leadTime", label: "Lead Time" },
+        { key: "score", label: "Score", options: ["Excellent", "Good", "Review"] }
+      ]);
+      table("employees", data.employees, [
+        { key: "name", label: "Name" },
+        { key: "role", label: "Role" },
+        { key: "assignment", label: "Assignment" },
+        { key: "availability", label: "Availability" },
+        { key: "status", label: "Status", options: ["Ready", "Assigned", "Training Needed"] }
+      ]);
+      save();
+    }
+    document.addEventListener("input", function(event) {
+      var target = event.target;
+      if (target.dataset.project) {
+        data.project[target.dataset.project] = target.type === "number" ? Number(target.value || 0) : target.value;
+        save();
+        updateSummary();
+      }
+      if (target.dataset.table) {
+        var row = data[target.dataset.table][Number(target.dataset.row)];
+        row[target.dataset.field] = target.type === "number" ? Number(target.value || 0) : target.value;
+        save();
+        updateSummary();
+      }
+      if (target.id === "packageNotes") {
+        data.notes = target.value;
+        save();
+      }
+    });
+    document.addEventListener("change", function(event) {
+      var target = event.target;
+      if (target.dataset.table) {
+        data[target.dataset.table][Number(target.dataset.row)][target.dataset.field] = target.value;
+        save();
+        render();
+      }
+      if (target.id === "importFile" && target.files.length) {
+        var reader = new FileReader();
+        reader.onload = function() {
+          try {
+            data = JSON.parse(reader.result);
+            save();
+            render();
+          } catch (error) {
+            text("status", "Import failed. Please use a project JSON export.");
+          }
+        };
+        reader.readAsText(target.files[0]);
+      }
+    });
+    document.addEventListener("submit", function(event) {
+      if (!event.target.dataset.add) return;
+      event.preventDefault();
+      var item = {};
+      Array.prototype.forEach.call(event.target.elements, function(field) {
+        if (field.name) item[field.name] = field.type === "number" ? Number(field.value || 0) : field.value;
+      });
+      data[event.target.dataset.add].push(item);
+      event.target.reset();
+      save();
+      render();
+    });
+    document.addEventListener("click", function(event) {
+      var target = event.target;
+      if (target.dataset.remove) {
+        data[target.dataset.remove].splice(Number(target.dataset.row), 1);
+        save();
+        render();
+      }
+      if (target.id === "resetBtn") {
+        data = copy(demo);
+        save();
+        render();
+      }
+      if (target.id === "importBtn") document.getElementById("importFile").click();
+      if (target.id === "exportBtn") {
+        var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.href = url;
+        link.download = "construction-project.json";
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+    });
+    render();
+  </script>
+</body>
+</html>
